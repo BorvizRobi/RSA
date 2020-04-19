@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Rsa{
 
-
+    private static final BigInteger MINUS_ONE = new BigInteger("-1");
     private static final BigInteger ZERO = BigInteger.ZERO;
     private static final BigInteger ONE = BigInteger.ONE;
     private static final BigInteger TWO = new BigInteger("2");
@@ -35,48 +35,91 @@ public class Rsa{
    }
 */
 
-  public static int bovitettEuklidesz(int a,int b){
+/*
+  public static BigInteger bovitettEuklidesz2(BigInteger a,BigInteger b){
 
-	if(a==0) return b;
-	if(b==0) return a;
+	if(a.equals(ZERO)) return b;
+	if(b.equals(ZERO)) return a;
       
-	Vector<Integer> r = new Vector<Integer>();
-	Vector<Integer> q = new Vector<Integer>();
-	Vector<Integer> x = new Vector<Integer>();
-	Vector<Integer> y = new Vector<Integer>();
+	Vector<BigInteger> r = new Vector<BigInteger>();
+	Vector<BigInteger> q = new Vector<BigInteger>();
+	Vector<BigInteger> x = new Vector<BigInteger>();
+	Vector<BigInteger> y = new Vector<BigInteger>();
 
 	r.add(a);
 	r.add(b);
 
-	q.add(-1);
+	q.add(MINUS_ONE);
 	
-	x.add(1);
-	x.add(0);
-	y.add(0);
-	y.add(1);
+	x.add(ONE);
+	x.add(ZERO);
+	y.add(ZERO);
+	y.add(ONE);
 
 	int i=1;
 
 	while(true){
 		
-	   q.add(r.get(i-1)/r.get(i));
-	   r.add(r.get(i-1)%r.get(i)); if(r.lastElement()== 0) break;
-	   x.add(x.get(i)*q.get(i)+x.get(i-1));
-	   y.add(y.get(i)*q.get(i)+y.get(i-1));
+	   q.add(r.get(i-1).divide(r.get(i)));
+	   r.add(r.get(i-1).mod(r.get(i))); if(r.lastElement().equals(ZERO)) break;
+	   x.add(x.get(i).multiply(q.get(i)).add(x.get(i-1)));
+	   y.add(y.get(i).multiply(q.get(i)).add(y.get(i-1)));
 
 	   i=i+1;
 	   }
    	
 
-	int X=(int)Math.pow(-1, r.size()-2)*x.get(r.size()-2);
-	int Y=(int)Math.pow(-1, r.size()-1)*y.get(r.size()-2);
+	BigInteger X=MINUS_ONE.pow(r.size()-2).multiply(x.get(r.size()-2));
+	BigInteger Y=MINUS_ONE.pow(r.size()-1).multiply(y.get(r.size()-2));
 	System.out.println(X);
 	System.out.println(Y);
-	return a*X+b*Y;
+	return a.multiply(X).add(b.multiply(Y));
+   }
+
+*/
+
+  public static BigInteger bovitettEuklidesz3(BigInteger a,BigInteger b){
+
+	if(a.equals(ZERO)) return b;
+	if(b.equals(ZERO)) return a;
+      	if(b.compareTo(a) == 1) {BigInteger temp = a; a=b; b=temp;}
+
+	BigInteger q;
+	BigInteger lastx=ONE;
+	BigInteger lasty=ZERO;
+	BigInteger x=ZERO;
+	BigInteger y=ONE;
+
+	BigInteger temp1;
+	BigInteger temp2;
+	BigInteger temp3;
+
+	while(!b.equals(ZERO)){
+	
+	   q=a.divide(b);
+	   temp1= a.mod(b);
+	   a=b;
+	   b=temp1;
+
+	   temp2=x;
+	   x=lastx.subtract(q.multiply(x));
+	   lastx=temp2;
+
+	   temp3=y;
+	   y=lasty.subtract(q.multiply(y));
+	   lasty=temp3;
+
+	}
+
+	System.out.println(lastx);
+	System.out.println(lasty);
+	return a;
+	
+
    }
 
    //a^b mod m megoldása
-   public static BigInteger modularisGyorsHatvanyozas(BigInteger a, BigInteger b,BigInteger m){
+   public static BigInteger modularisGyorsHatvanyozas(BigInteger a, BigInteger b, BigInteger m){
 	
 
    	String b_binarystring= b.toString(2);
@@ -146,7 +189,7 @@ public class Rsa{
 
          for(int r=1;r<S.intValue();r++){
      	
-	      x=modularisGyorsHatvanyozas(x,TWO,n);
+	      x=x.pow(2).mod(n);
                        
 	      if(x.equals(n.subtract(ONE))) 
 		continue WitnessLoop;	
@@ -164,18 +207,26 @@ public class Rsa{
 
    public static void main(String[] args){
 
-      //int c=bovitettEuklidesz(a,b);
+
+
       //BigInteger a = new BigInteger("298098031222221343141341111111111111112222222222222222222222222222222222222222222222222222222222222222221213314");
       //BigInteger b = new BigInteger("4790132444444444444444444449128498725278678678678678678524367834618646313272321221341344444444443413414314141341314134134141341413");
       //BigInteger m = new BigInteger("10080983141341434565");
       
       //BigInteger c= modularisGyorsHatvanyozas(a,b,m);
 
-	BigInteger n = new BigInteger("6700417");
+	//BigInteger n = new BigInteger("6700417");
 
 	
-      boolean prime = MR_PrimTeszt(n,6);
-	System.out.println(prime);
+      //boolean prime = MR_PrimTeszt(n,6);
+	//System.out.println(prime);
+
+
+
+	BigInteger a1 = new BigInteger("180");
+	BigInteger b1 = new BigInteger("150");
+	BigInteger c1 = bovitettEuklidesz3(a1,b1);
+	System.out.println(c1);
       
    }
 }
