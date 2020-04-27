@@ -2,6 +2,33 @@ import java.util.Vector;
 import java.math.BigInteger;
 import java.util.Random;
 
+class euklideszEredmeny 
+{ 
+    private BigInteger lnko;
+    private BigInteger X;
+    private BigInteger Y;
+
+    public euklideszEredmeny(BigInteger lnko,BigInteger X,BigInteger Y){
+		this.lnko=lnko;
+		this.X=X;
+		this.Y=Y;
+
+	}
+
+   public BigInteger getLnko(){
+     return lnko;
+   }
+
+   public BigInteger getX(){
+     return X;
+   }
+   public BigInteger getY(){
+     return Y;
+   }
+} 
+
+
+
 public class Rsa{
 
     private static final BigInteger MINUS_ONE = new BigInteger("-1");
@@ -78,10 +105,10 @@ public class Rsa{
 
 */
 
-  public static BigInteger bovitettEuklidesz3(BigInteger a,BigInteger b){
+  public static euklideszEredmeny bovitettEuklidesz(BigInteger a,BigInteger b){
 
-	if(a.equals(ZERO)) return b;
-	if(b.equals(ZERO)) return a;
+	if(a.equals(ZERO)) return new euklideszEredmeny(b,ZERO,ZERO);
+	if(b.equals(ZERO)) return new euklideszEredmeny(a,ZERO,ZERO);
       	if(b.compareTo(a) == 1) {BigInteger temp = a; a=b; b=temp;}
 
 	BigInteger q;
@@ -110,10 +137,10 @@ public class Rsa{
 	   lasty=temp3;
 
 	}
-
-	System.out.println(lastx);
-	System.out.println(lasty);
-	return a;
+	euklideszEredmeny eredmeny = new euklideszEredmeny(a,lastx,lasty);
+	//System.out.println(lastx);
+	//System.out.println(lasty);
+	return eredmeny;
 	
 
    }
@@ -204,6 +231,34 @@ public class Rsa{
 
    }
 
+   public static BigInteger randomPrim(BigInteger min, BigInteger max){
+
+	while(true){
+
+	BigInteger p= randomBigInteger(min,max);
+	if(!p.testBit(0)) p=p.subtract(ONE);
+	
+	if(MR_PrimTeszt(p,4)) return p;
+
+	}
+   }
+
+   public static BigInteger find_e(BigInteger fi_n){
+
+	BigInteger e = THREE;
+
+	while(true){
+	//euklidesEredmeny eredmeny = bovitettEuklidesz(fi_n,e);
+	BigInteger lnko= bovitettEuklidesz(fi_n,e).getLnko();
+	if(lnko.equals(ONE)) return e;
+	
+	e=e.add(TWO);
+
+	}
+   }
+
+   
+
 
    public static void main(String[] args){
 
@@ -223,10 +278,38 @@ public class Rsa{
 
 
 
-	BigInteger a1 = new BigInteger("180");
-	BigInteger b1 = new BigInteger("150");
-	BigInteger c1 = bovitettEuklidesz3(a1,b1);
-	System.out.println(c1);
+	//BigInteger a1 = new BigInteger("180");
+	//BigInteger b1 = new BigInteger("150");
+	//BigInteger c1 = bovitettEuklidesz3(a1,b1);
+	//System.out.println(c1);
+
+
+	BigInteger min = new BigInteger("10000");
+	BigInteger max = new BigInteger("1000000000000000000000000000000000000000000000000000000000000");
+
+	BigInteger p= randomPrim(min,max);
+	BigInteger q= randomPrim(min,max);
+
+	System.out.println(p);
+	System.out.println(q);
+
+	BigInteger n = p.multiply(q);
+	System.out.println(n);
+
+	BigInteger fi_n = p.subtract(ONE).multiply(q.subtract(ONE));
+	System.out.println(fi_n);
+
+	BigInteger e = find_e(fi_n);
+	System.out.println(e);
+
+	euklideszEredmeny eredmeny = bovitettEuklidesz(e,fi_n);
+
+	BigInteger d = eredmeny.getX();
+	if(d.compareTo(ONE) == -1) d=d.add(fi_n);
+	System.out.println(d);
+
+	
+
       
    }
 }
