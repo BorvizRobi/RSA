@@ -2,31 +2,33 @@ import java.util.Vector;
 import java.math.BigInteger;
 import java.util.Random;
 
-class euklideszEredmeny 
-{ 
+class euklideszEredmeny{ 
+
     private BigInteger lnko;
-    private BigInteger X;
-    private BigInteger Y;
+    private BigInteger x;
+    private BigInteger y;
 
-    public euklideszEredmeny(BigInteger lnko,BigInteger X,BigInteger Y){
-		this.lnko=lnko;
-		this.X=X;
-		this.Y=Y;
+    public euklideszEredmeny(BigInteger lnko,BigInteger x,BigInteger y){
 
-	}
+       this.lnko=lnko;
+       this.x=x;
+       this.y=y;
 
-   public BigInteger getLnko(){
-     return lnko;
-   }
+    }
 
-   public BigInteger getX(){
-     return X;
-   }
-   public BigInteger getY(){
-     return Y;
-   }
+    public BigInteger getLnko(){
+       return lnko;
+    }
+
+    public BigInteger getX(){
+       return x;
+    }
+
+    public BigInteger getY(){
+       return y;
+    }
+
 } 
-
 
 
 public class Rsa{
@@ -37,79 +39,11 @@ public class Rsa{
     private static final BigInteger TWO = new BigInteger("2");
     private static final BigInteger THREE = new BigInteger("3");
 
-/*
-  public static int Euklidesz(int a,int b){
-      
-	Vector<Integer> r = new Vector<Integer>();
-	Vector<Integer> q = new Vector<Integer>();
 
-	r.add(a);
-	r.add(b);
+    public static euklideszEredmeny bovitettEuklidesz(BigInteger a,BigInteger b){
 
-	q.add(-1);
-
-	int i=1;
-
-	while(r.lastElement()!= 0){
-		
-	   r.add(r.get(i-1)%r.get(i));
-	   q.add(r.get(i-1)/r.get(i));
-		
-	   i=i+1;
-	   }
-
-	return r.get(r.size()-2);
-   }
-*/
-
-/*
-  public static BigInteger bovitettEuklidesz2(BigInteger a,BigInteger b){
-
-	if(a.equals(ZERO)) return b;
-	if(b.equals(ZERO)) return a;
-      
-	Vector<BigInteger> r = new Vector<BigInteger>();
-	Vector<BigInteger> q = new Vector<BigInteger>();
-	Vector<BigInteger> x = new Vector<BigInteger>();
-	Vector<BigInteger> y = new Vector<BigInteger>();
-
-	r.add(a);
-	r.add(b);
-
-	q.add(MINUS_ONE);
-	
-	x.add(ONE);
-	x.add(ZERO);
-	y.add(ZERO);
-	y.add(ONE);
-
-	int i=1;
-
-	while(true){
-		
-	   q.add(r.get(i-1).divide(r.get(i)));
-	   r.add(r.get(i-1).mod(r.get(i))); if(r.lastElement().equals(ZERO)) break;
-	   x.add(x.get(i).multiply(q.get(i)).add(x.get(i-1)));
-	   y.add(y.get(i).multiply(q.get(i)).add(y.get(i-1)));
-
-	   i=i+1;
-	   }
-   	
-
-	BigInteger X=MINUS_ONE.pow(r.size()-2).multiply(x.get(r.size()-2));
-	BigInteger Y=MINUS_ONE.pow(r.size()-1).multiply(y.get(r.size()-2));
-	System.out.println(X);
-	System.out.println(Y);
-	return a.multiply(X).add(b.multiply(Y));
-   }
-
-*/
-
-  public static euklideszEredmeny bovitettEuklidesz(BigInteger a,BigInteger b){
-
-	if(a.equals(ZERO)) return new euklideszEredmeny(b,ZERO,ZERO);
-	if(b.equals(ZERO)) return new euklideszEredmeny(a,ZERO,ZERO);
-      	if(b.compareTo(a) == 1) {BigInteger temp = a; a=b; b=temp;}
+	if(a.equals(ZERO)) return new euklideszEredmeny(b,ZERO,ONE);
+	if(b.equals(ZERO)) return new euklideszEredmeny(a,ONE,ZERO);
 
 	BigInteger q;
 	BigInteger lastx=ONE;
@@ -137,49 +71,38 @@ public class Rsa{
 	   lasty=temp3;
 
 	}
+
 	euklideszEredmeny eredmeny = new euklideszEredmeny(a,lastx,lasty);
-	//System.out.println(lastx);
-	//System.out.println(lasty);
+
 	return eredmeny;
 	
-
    }
 
    //a^b mod m megoldása
-   public static BigInteger modularisGyorsHatvanyozas(BigInteger a, BigInteger b, BigInteger m){
+    public static BigInteger modularisGyorsHatvanyozas(BigInteger a, BigInteger b, BigInteger m){
 	
 
-   	String b_binarystring= b.toString(2);
+   	String b_binarystring = b.toString(2);
 
 	BigInteger answer = new BigInteger("1");
-	BigInteger c=a.mod(m);
+	BigInteger c = a.mod(m);
 
 	for(int i = 0;i<b_binarystring.length();i++){	
 
-		if(b_binarystring.charAt((b_binarystring.length()-1)-i)=='1') 
+		if(b_binarystring.charAt((b_binarystring.length()-1)-i) =='1') 
 		   answer = answer.multiply(c);
 
-		c=c.pow(2).mod(m);
+		c = c.pow(2).mod(m);
 			
 	}
 
 	return answer.mod(m);
 
 
-   }
+    }
 
-   public static BigInteger randomBigInteger(BigInteger bottom, BigInteger top) {
-
-        Random rnd = new Random();
-        BigInteger res;
-        do {
-            res = new BigInteger(top.bitLength(), rnd);
-        } while (res.compareTo(bottom) < 0 || res.compareTo(top) > 0);
-        return res;
-   }
-
-   //Ha igazat ad vissza akkor n vagy prím vagy összetett, ha hamisat akkor n összetett
-   public static boolean MR_PrimTeszt(BigInteger n, int k){  
+    //Ha igazat ad vissza akkor n vagy prím vagy összetett, ha hamisat akkor n összetett
+    public static boolean MR_PrimTeszt(BigInteger n, int k){  
    
       if (n.equals(ZERO) || n.equals(ONE)) 
          return false;
@@ -204,10 +127,16 @@ public class Rsa{
 
       WitnessLoop: for(int i=0;i<k;i++){
 
-	if(i==0)
+	if(i == 0)
 	  tanu = TWO;
-	else
-          tanu= randomBigInteger(TWO,n.add(BigInteger.valueOf(-2)));
+
+	else{
+
+          tanu = randomBigInteger(TWO,n.add(BigInteger.valueOf(-2)));
+
+	  if(!tanu.mod(TWO).equals(ZERO)) 
+	     tanu = tanu.add(ONE);
+	}
 	
         BigInteger x = modularisGyorsHatvanyozas(tanu,d,n);
 	  
@@ -216,61 +145,68 @@ public class Rsa{
 
          for(int r=1;r<S.intValue();r++){
      	
-	      x=x.pow(2).mod(n);
+	      x = x.pow(2).mod(n);
                        
 	      if(x.equals(n.subtract(ONE))) 
 		continue WitnessLoop;	
          
 
          }   
+
 	return false;
          
       }
  
       return true;
 
-   }
+    }
 
-   public static BigInteger randomPrim(BigInteger min, BigInteger max){
+    public static BigInteger randomBigInteger(BigInteger bottom, BigInteger top) {
+
+        Random rnd = new Random();
+        BigInteger res;
+        do {
+            res = new BigInteger(top.bitLength(), rnd);
+        } while (res.compareTo(bottom) < 0 || res.compareTo(top) > 0);
+        return res;
+    }
+
+    public static BigInteger randomPrim(BigInteger min, BigInteger max){
 
 	while(true){
 
-	BigInteger p= randomBigInteger(min,max);
-	if(!p.testBit(0)) p=p.subtract(ONE);
+	BigInteger p = randomBigInteger(min,max);
+	if(!p.testBit(0)) p = p.subtract(ONE);
 	
 	if(MR_PrimTeszt(p,4)) return p;
 
 	}
-   }
+    }
 
-   public static BigInteger find_e(BigInteger fi_n){
+    public static BigInteger find_e(BigInteger fi_n){
 
 	BigInteger e = THREE;
 
 	while(true){
-	//euklidesEredmeny eredmeny = bovitettEuklidesz(fi_n,e);
-	BigInteger lnko= bovitettEuklidesz(fi_n,e).getLnko();
+	
+	BigInteger lnko = bovitettEuklidesz(fi_n,e).getLnko();
 	if(lnko.equals(ONE)) return e;
 	
 	e=e.add(TWO);
 
 	}
-   }
+    }
 
-   
+    public static void main(String[] args){
 
-
-   public static void main(String[] args){
-
-
-
-      //BigInteger a = new BigInteger("298098031222221343141341111111111111112222222222222222222222222222222222222222222222222222222222222222221213314");
-      //BigInteger b = new BigInteger("4790132444444444444444444449128498725278678678678678678524367834618646313272321221341344444444443413414314141341314134134141341413");
-      //BigInteger m = new BigInteger("10080983141341434565");
+      //BigInteger a = new BigInteger("5");
+     // BigInteger b = new BigInteger("117");
+      //BigInteger m = new BigInteger("19");
       
       //BigInteger c= modularisGyorsHatvanyozas(a,b,m);
+      //System.out.println(c);
 
-	//BigInteger n = new BigInteger("6700417");
+	//BigInteger n = new BigInteger("97");
 
 	
       //boolean prime = MR_PrimTeszt(n,6);
@@ -282,34 +218,43 @@ public class Rsa{
 	//BigInteger b1 = new BigInteger("150");
 	//BigInteger c1 = bovitettEuklidesz3(a1,b1);
 	//System.out.println(c1);
-
-
-	BigInteger min = new BigInteger("10000");
-	BigInteger max = new BigInteger("1000000000000000000000000000000000000000000000000000000000000");
+	
+	
+	BigInteger min = new BigInteger("10000000000000000000000000000000");
+	BigInteger max = new BigInteger("10000000000000000000000000000000000000000000000000000000000000000000000000");
 
 	BigInteger p= randomPrim(min,max);
 	BigInteger q= randomPrim(min,max);
 
-	System.out.println(p);
-	System.out.println(q);
+
+	System.out.println("p: " + p);
+	System.out.println("q: " + q);
 
 	BigInteger n = p.multiply(q);
-	System.out.println(n);
+	System.out.println("n: "+ n);
 
 	BigInteger fi_n = p.subtract(ONE).multiply(q.subtract(ONE));
-	System.out.println(fi_n);
+	System.out.println("fi_n: "+ fi_n);
 
 	BigInteger e = find_e(fi_n);
-	System.out.println(e);
+	System.out.println("e:"+ e);
 
 	euklideszEredmeny eredmeny = bovitettEuklidesz(e,fi_n);
 
 	BigInteger d = eredmeny.getX();
 	if(d.compareTo(ONE) == -1) d=d.add(fi_n);
-	System.out.println(d);
+	System.out.println("d: "+d);
 
-	
+
+
+	BigInteger uzenet = new BigInteger("12102301310323124124141564444444444444444444446464");
+	System.out.println("Eredeti üzenet: " + uzenet);
+	BigInteger titkositot_uzenet = modularisGyorsHatvanyozas(uzenet,e,n);
+	System.out.println("Titkosított üzenet: " + titkositot_uzenet);
+
+	BigInteger uzenet_visszafejtett=modularisGyorsHatvanyozas(titkositot_uzenet,d,n);
+	System.out.println("Visszafejtett üzenet: " + uzenet_visszafejtett);
 
       
-   }
+    }
 }
