@@ -1,7 +1,11 @@
 import java.util.Vector;
 import java.math.BigInteger;
 import java.util.Random;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
+//egyszerű class a bővitett Euklideszi algoritmus eredményének tárolására szolgál
 class euklideszEredmeny{ 
 
     private BigInteger lnko;
@@ -78,7 +82,7 @@ public class Rsa{
 	
    }
 
-   //a^b mod m megoldása
+  
     public static BigInteger modularisGyorsHatvanyozas(BigInteger a, BigInteger b, BigInteger m){
 	
 
@@ -101,7 +105,7 @@ public class Rsa{
 
     }
 
-    //Ha igazat ad vissza akkor n vagy prím vagy összetett, ha hamisat akkor n összetett
+   
     public static boolean MR_PrimTeszt(BigInteger n, int k){  
    
       if (n.equals(ZERO) || n.equals(ONE)) 
@@ -161,6 +165,20 @@ public class Rsa{
 
     }
 
+    public static BigInteger find_e(BigInteger fi_n){
+
+	BigInteger e = THREE;
+
+	while(true){
+	
+	BigInteger lnko = bovitettEuklidesz(fi_n,e).getLnko();
+	if(lnko.equals(ONE)) return e;
+	
+	e=e.add(TWO);
+
+	}
+    }
+
     public static BigInteger randomBigInteger(BigInteger bottom, BigInteger top) {
 
         Random rnd = new Random();
@@ -183,45 +201,12 @@ public class Rsa{
 	}
     }
 
-    public static BigInteger find_e(BigInteger fi_n){
 
-	BigInteger e = THREE;
-
-	while(true){
-	
-	BigInteger lnko = bovitettEuklidesz(fi_n,e).getLnko();
-	if(lnko.equals(ONE)) return e;
-	
-	e=e.add(TWO);
-
-	}
-    }
-
-    public static void main(String[] args){
-
-      //BigInteger a = new BigInteger("5");
-     // BigInteger b = new BigInteger("117");
-      //BigInteger m = new BigInteger("19");
-      
-      //BigInteger c= modularisGyorsHatvanyozas(a,b,m);
-      //System.out.println(c);
-
-	//BigInteger n = new BigInteger("97");
-
-	
-      //boolean prime = MR_PrimTeszt(n,6);
-	//System.out.println(prime);
-
-
-
-	//BigInteger a1 = new BigInteger("180");
-	//BigInteger b1 = new BigInteger("150");
-	//BigInteger c1 = bovitettEuklidesz3(a1,b1);
-	//System.out.println(c1);
+    public static void main(String[] args) throws IOException {
 	
 	
 	BigInteger min = new BigInteger("10000000000000000000000000000000");
-	BigInteger max = new BigInteger("10000000000000000000000000000000000000000000000000000000000000000000000000");
+	BigInteger max = new BigInteger("10000000000000000000000000000000000000000000000000000000000000000000");
 
 	BigInteger p= randomPrim(min,max);
 	BigInteger q= randomPrim(min,max);
@@ -245,16 +230,41 @@ public class Rsa{
 	if(d.compareTo(ONE) == -1) d=d.add(fi_n);
 	System.out.println("d: "+d);
 
+	System.out.println();
+	
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+	System.out.println("Add meg az üzenetet:");
 
-	BigInteger uzenet = new BigInteger("12102301310323124124141564444444444444444444446464");
-	System.out.println("Eredeti üzenet: " + uzenet);
-	BigInteger titkositot_uzenet = modularisGyorsHatvanyozas(uzenet,e,n);
-	System.out.println("Titkosított üzenet: " + titkositot_uzenet);
+	String uzenet_input = br.readLine();
+	BigInteger uzenet = new BigInteger(uzenet_input);
 
-	BigInteger uzenet_visszafejtett=modularisGyorsHatvanyozas(titkositot_uzenet,d,n);
-	System.out.println("Visszafejtett üzenet: " + uzenet_visszafejtett);
+	if(uzenet.compareTo(n) == -1){
 
+		System.out.println("titkosítani vagy visszafejteni szeretnél(t|v):");
+		String valsztas_input = br.readLine();
+
+		if(valsztas_input.equals("t")){
+			BigInteger titkositot_uzenet = modularisGyorsHatvanyozas(uzenet,e,n);
+			System.out.println("Titkosított üzenet: " + titkositot_uzenet);
+
+			BigInteger uzenet_visszafejtett=modularisGyorsHatvanyozas(titkositot_uzenet,d,n);
+			System.out.println("Ellenorzés, üzenet visszafejtése: " + uzenet_visszafejtett);
+		}
+		else if(valsztas_input.equals("v")){
+
+			BigInteger uzenet_visszafejtett=modularisGyorsHatvanyozas(uzenet,d,n);
+			System.out.println("Üzenet visszafejtése: " + uzenet_visszafejtett);
+
+			BigInteger titkositot_uzenet = modularisGyorsHatvanyozas(uzenet_visszafejtett,e,n);
+			System.out.println("Ellenőrzés, újra titkosítva a visszafejtett üzenet: " + titkositot_uzenet);
+
+		}
+		else System.out.println("Hiba! 'v'-t, vagy 't'-t adj meg!");
+	
+	}
+
+	else System.out.println("Hiba! Az üzenet kisebb kell legyen n-nél!");
       
     }
 }
