@@ -50,6 +50,7 @@ public class Rsa{
 	if(b.equals(ZERO)) return new euklideszEredmeny(a,ONE,ZERO);
 
 	BigInteger q;
+
 	BigInteger lastx=ONE;
 	BigInteger lasty=ZERO;
 	BigInteger x=ZERO;
@@ -62,6 +63,7 @@ public class Rsa{
 	while(!b.equals(ZERO)){
 	
 	   q=a.divide(b);
+
 	   temp1= a.mod(b);
 	   a=b;
 	   b=temp1;
@@ -93,7 +95,7 @@ public class Rsa{
 
 	for(int i = 0;i<b_binarystring.length();i++){	
 
-		if(b_binarystring.charAt((b_binarystring.length()-1)-i) =='1') 
+		if(b_binarystring.charAt((b_binarystring.length()-1)-i) == '1') 
 		   answer = answer.multiply(c);
 
 		c = c.pow(2).mod(m);
@@ -138,8 +140,6 @@ public class Rsa{
 
           tanu = randomBigInteger(TWO,n.add(BigInteger.valueOf(-2)));
 
-	  if(!tanu.mod(TWO).equals(ZERO)) 
-	     tanu = tanu.add(ONE);
 	}
 	
         BigInteger x = modularisGyorsHatvanyozas(tanu,d,n);
@@ -206,7 +206,7 @@ public class Rsa{
 	
 	
 	BigInteger min = new BigInteger("10000000000000000000000000000000");
-	BigInteger max = new BigInteger("10000000000000000000000000000000000000000000000000000000000000000000");
+	BigInteger max = new BigInteger("100000000000000000000000000000000000000000000000000000000000000000000");
 
 	BigInteger p= randomPrim(min,max);
 	BigInteger q= randomPrim(min,max);
@@ -227,7 +227,7 @@ public class Rsa{
 	euklideszEredmeny eredmeny = bovitettEuklidesz(e,fi_n);
 
 	BigInteger d = eredmeny.getX();
-	if(d.compareTo(ONE) == -1) d=d.add(fi_n);
+	if(d.compareTo(ZERO) == -1) d=d.add(fi_n);
 	System.out.println("d: "+d);
 
 	System.out.println();
